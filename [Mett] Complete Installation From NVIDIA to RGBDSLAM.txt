@@ -1,0 +1,82 @@
+Complete Installation Guide From NVIDIA, freeglut3-dev up to RGBDSLAM
+Documented by Emmett N. Young (April 3, 2014)
+
+This guide can serve as your basis in installating your NVIDIA card up to RGBDSLAM.
+
+ASUS F550CC--Intel i5--NVIDIA 720M--Ubuntu 12.04 x64
+
+This guide is documented and was done after fresh installation..
+(Regardless of Ubuntu is being updated or not upon installation)
+
+1. Installing non-optimus NVIDIA card
+
+	1. Install first proprietary driver using Additional Drivers and restart. 
+	2. Install second proprietary driver using Additional Drivers and run 
+	   sudo apt-get install mesa-utils && sudo-reboot
+	3. Update NVIDIA
+		sudo add-apt-repository ppa:xorg-edgers/ppa	(ppa:ubuntu-x-swat/x-updates cannot be updated with freeglut3-dev)
+		sudo apt-get update
+		sudo apt-get dist-upgrade
+	4. Install again updated propreitary driver using Additional Drivers and restart.	
+		Press start and click Details. You will see the graphics card installed.
+	5. Downgrade NVIDIA
+		sudo apt-get install ppa-purge
+		sudo ppa-purge ppa:xorg-edgers/ppa
+	6. Installing freeglut3-dev
+	(You must install freeglut3-dev as it needs the downgraded
+	version of NVIDIA for it to be installed correctly. Otherwise, it will remove xserver 
+	packages and ubuntu-desktop packages that will disable you to boot into Ubuntu GUI ever again)
+	sudo apt-get install freeglut3-dev	(make sure it does not remove any packages otherwise,
+						you're dead meat!)
+	7. sudo apt-get upgrade (do not attempt to dist-upgrade because it will ruin the Ubuntu)
+NOTE: Everytime you suspend, you may encounter white screen when waking up. A minor workaround here is to press
+Ctrl+Alt+F1, you will be shown a black screen terminal. Then press Ctrl+Alt+F7 to go back to GUI. You may now use 
+Ubuntu again but only with white screen background.
+2. Install NVIDIA CUDA 5.5
+   	1. sudo service lightdm stop
+ 	2. sudo ./cuda_5.5.22_linux_64.run
+	Note: install everything (including the driver). The deb packages is not supported anymore because 
+	of sudo apt-get dist-upgrade
+	3. Reboot
+	4. Add to system path in ~/.bashrc file
+		export CUDA_HOME=/usr/local/cuda 
+		export LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH} 
+ 		export PATH=${CUDA_HOME}/bin:${PATH} 
+	5. Compile samples (Optional)
+		cd ~/NVIDIA_CUDA-5.5_Samples 
+		sudo make
+	5. Verify by running
+		./deviceQuery
+		./smokeParticles		 
+3. Install ROS by running . ros.sh
+4. Install full ROS fuerte by running . full_ros.sh
+5. Install OpenNI2
+	cd ~/Documents
+	sudo apt-get install git g++ make python libusb-1.0-0-dev libudev-dev pkg-config
+	git clone https://github.com/occipital/openni2
+	cd openni2
+	make
+	cd /Packaging/Linux
+	sudo ./install.sh
+	sudo cp -r Include /usr/include/openni2
+	sudo cp -r Bin/x64-Release/OpenNI2 /usr/lib/
+	sudo cp Bin/x64-Release/libOpenNI2.* /usr/lib/
+	sudo nano /usr/lib/pkgconfig/libopenni2.pc
+   then fill it with
+*****************************************************************
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include/openni2
+
+Name: OpenNI2
+Description: A general purpose driver for all OpenNI cameras.
+Version: 2.2.0.0
+Cflags: -I${includedir}
+Libs: -L${libdir} -lOpenNI2 -L${libdir}/OpenNI2/Drivers -lDummyDevice -lOniFile -lPS1080.so
+*****************************************************************
+   verify if openni2 is installed successfully
+	pkg-config --modversion libopenni2
+   should give the correct version of openni2.
+	sudo nano /etc/openni/GlobalDefaults.ini
+   uncomment UsbInterface=2 then save

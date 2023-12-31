@@ -1,0 +1,12 @@
+<launch>
+
+  <node pkg="merry_navigation_stack" type="merry_navigation_stack" name="merry_navigation_stack" output="screen">
+     <param name="pose_timeout" value = "2" />  <!-- Timeout for pose reading before invalidation -->
+     <param name="freq_map" value = "5" /> <!-- frequency of the 2D map creation -->
+     <param name="freq_autonomous" value = "1" /> <!-- frequency of the autonomous planner -->
+     <param name="inflation_radius" value = "0.25" /> <!-- Inflation radius of the obstacles in meters -->
+  </node>
+  <node pkg="rviz" type="rviz" name="rviz" output="log" args="-d $(find multi_rgbdslam)/launch/merry_config.vcg" />
+  <node pkg="merry_telemetry3_v2" name="merry_telemetry" type="merry_telemetry" output="screen" />
+
+</launch>

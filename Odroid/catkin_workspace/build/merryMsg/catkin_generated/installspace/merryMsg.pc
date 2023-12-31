@@ -1,0 +1,8 @@
+prefix=/home/odroid/catkin_workspace/install
+
+Name: merryMsg
+Description: Description of merryMsg
+Version: 0.0.0
+Cflags: -I/home/odroid/catkin_workspace/install/include
+Libs: -L/home/odroid/catkin_workspace/install/lib -lmerryMsg
+Requires: roscpp std_msgs message_runtime

@@ -1,0 +1,8 @@
+prefix=/home/odroid/catkin_workspace/install
+
+Name: rgbd_launch
+Description: Description of rgbd_launch
+Version: 2.0.1
+Cflags: 
+Libs: -L/home/odroid/catkin_workspace/install/lib 
+Requires: 

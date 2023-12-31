@@ -1,0 +1,21 @@
+<launch>
+
+  <arg name="camera" default="camera1" />
+
+  <group ns="$(arg camera)">
+	<node pkg="openni2_camera" type="openni2_camera_node" name="driver">
+			
+	  <!-- Readjust camera resolution and frame rate -->
+	  <param name="color_mode" value = "8" />
+	  <param name="depth_mode" value = "8" />
+	  <param name="ir_mode" value = "8" />
+	  <param name="data_skip" value = "1" />
+	  <param name="depth_registration" value="true" />
+          <remap from="rgb/image" to="rgb/image_raw" />
+          <remap from="depth/image" to="depth_registered/image_raw" />
+        </node>
+  </group>
+<!--  <include file="$(find rgbd_launch)/launch/kinect_frames.launch">
+  <arg name="camera" value="camera1"/>
+  </include> -->
+</launch>

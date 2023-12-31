@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "rgbd_launch")
+set(rgbd_launch_MAINTAINER "Piyush Khandelwal <piyushk@gmail.com>")
+set(rgbd_launch_DEPRECATED "")
+set(rgbd_launch_VERSION "2.0.1")
+set(rgbd_launch_BUILD_DEPENDS "depth_image_proc" "image_proc" "nodelet" "tf")
+set(rgbd_launch_RUN_DEPENDS "depth_image_proc" "image_proc" "nodelet" "tf")
+set(rgbd_launch_BUILDTOOL_DEPENDS "catkin")

@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Telemetry</class>
+ <widget class="QWidget" name="Telemetry">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1106</width>
+    <height>726</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Telemetry</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="4" column="4">
+    <widget class="QPushButton" name="btn_land2">
+     <property name="text">
+      <string>LAND</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QLabel" name="label_2">
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>QUAD1</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="8">
+    <widget class="QPushButton" name="btn_legends">
+     <property name="text">
+      <string>Hide Legends</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Battery</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="4" rowspan="2">
+    <widget class="QPushButton" name="btn_start2">
+     <property name="text">
+      <string>START</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="5">
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>Battery</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="6" rowspan="2">
+    <widget class="QLabel" name="lbl_quad2_stat">
+     <property name="text">
+      <string>Disconnected!</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="6">
+    <widget class="QProgressBar" name="pb_quad2">
+     <property name="value">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="3">
+    <widget class="QProgressBar" name="pb_quad1">
+     <property name="value">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="9">
+    <widget class="QTabWidget" name="tab_telemetry">
+     <property name="currentIndex">
+      <number>2</number>
+     </property>
+     <widget class="QWidget" name="tab_quad1">
+      <attribute name="title">
+       <string>QUAD1</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="1" column="0">
+        <widget class="QCustomPlot" name="plot_x1" native="true"/>
+       </item>
+       <item row="0" column="0">
+        <widget class="QCustomPlot" name="plot_height1" native="true"/>
+       </item>
+       <item row="1" column="1">
+        <widget class="QCustomPlot" name="plot_y1" native="true"/>
+       </item>
+       <item row="0" column="1">
+        <widget class="QCustomPlot" name="plot_yaw1" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_quad2">
+      <attribute name="title">
+       <string>QUAD2</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="1" column="0">
+        <widget class="QCustomPlot" name="plot_x2" native="true"/>
+       </item>
+       <item row="1" column="1">
+        <widget class="QCustomPlot" name="plot_y2" native="true"/>
+       </item>
+       <item row="0" column="0">
+        <widget class="QCustomPlot" name="plot_height2" native="true"/>
+       </item>
+       <item row="0" column="1">
+        <widget class="QCustomPlot" name="plot_yaw2" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_control">
+      <attribute name="title">
+       <string>CONTROL TEST</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="1">
+        <widget class="QComboBox" name="comboBox">
+         <item>
+          <property name="text">
+           <string>QUAD1</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>QUAD2</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="6" column="1" colspan="4">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>298</width>
+           <height>344</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="0" rowspan="3">
+        <spacer name="horizontalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>38</width>
+           <height>138</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="5" column="3">
+        <widget class="QPushButton" name="btn_arm">
+         <property name="text">
+          <string>ARM</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="txt_yaw"/>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="txt_height"/>
+       </item>
+       <item row="1" column="3">
+        <widget class="QPushButton" name="btn_height">
+         <property name="text">
+          <string>Height</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3">
+        <widget class="QPushButton" name="btn_yaw">
+         <property name="text">
+          <string>Yaw</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="5" rowspan="5">
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>678</width>
+           <height>485</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="4" column="1" colspan="3">
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>282</width>
+           <height>140</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="5" column="1">
+        <widget class="QPushButton" name="btn_start">
+         <property name="text">
+          <string>START</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2" rowspan="3">
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>39</width>
+           <height>138</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="4" rowspan="3">
+        <spacer name="horizontalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>38</width>
+           <height>138</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item row="1" column="5">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>QUAD2</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QPushButton" name="btn_land1">
+     <property name="text">
+      <string>LAND</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" rowspan="2">
+    <widget class="QPushButton" name="btn_start1">
+     <property name="text">
+      <string>START</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="5" rowspan="2">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>Status</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3" rowspan="2">
+    <widget class="QLabel" name="lbl_quad1_stat">
+     <property name="text">
+      <string>Disconnected!</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="4">
+    <widget class="QPushButton" name="btn_arm2">
+     <property name="text">
+      <string>ARM</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="8">
+    <widget class="QPushButton" name="btn_reset">
+     <property name="text">
+      <string>RESET</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="8">
+    <widget class="QPushButton" name="btn_print">
+     <property name="text">
+      <string>PRINT</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="7" rowspan="4">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>748</width>
+       <height>58</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="3" column="1">
+    <widget class="QPushButton" name="btn_arm1">
+     <property name="text">
+      <string>ARM</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2" rowspan="2">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Status</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" rowspan="4">
+    <spacer name="horizontalSpacer_6">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>48</width>
+       <height>58</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+  <zorder>horizontalSpacer</zorder>
+  <zorder>btn_reset</zorder>
+  <zorder>btn_print</zorder>
+  <zorder>btn_legends</zorder>
+  <zorder>tab_telemetry</zorder>
+  <zorder>btn_start1</zorder>
+  <zorder>btn_arm1</zorder>
+  <zorder>btn_land1</zorder>
+  <zorder>btn_land2</zorder>
+  <zorder>btn_arm2</zorder>
+  <zorder>btn_start2</zorder>
+  <zorder>lbl_quad2_stat</zorder>
+  <zorder>pb_quad2</zorder>
+  <zorder>pb_quad1</zorder>
+  <zorder>lbl_quad1_stat</zorder>
+  <zorder>label</zorder>
+  <zorder>label_3</zorder>
+  <zorder>horizontalSpacer_6</zorder>
+  <zorder>label_5</zorder>
+  <zorder>label_6</zorder>
+  <zorder>label_2</zorder>
+  <zorder>label_4</zorder>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QCustomPlot</class>
+   <extends>QWidget</extends>
+   <header>qcustomplot.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

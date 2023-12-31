@@ -1,0 +1,85 @@
+<!-- 
+**********************************************
+Base Station System - Adapted RGBDSLAM System
+**********************************************
+This Adapted Rgbdslam System consists of two (2) parallel systems. The mentioned system consists of 
+the modified RGBDSLAM system where its input are connected to the openni_launch and its output are connected 
+to an octomap_server. 
+-->
+
+<launch>
+
+  <arg name="publish_tf" default="true" />
+
+  <!-- Load reasonable defaults for the relative pose between cameras -->
+  <include if="$(arg publish_tf)"
+	   file="$(find openni_launch)/launch/kinect_frames.launch">
+    <arg name="camera" value="camera0" />
+  </include>
+
+  <!-- Load reasonable defaults for the relative pose between cameras -->
+  <include if="$(arg publish_tf)"
+	   file="$(find openni_launch)/launch/kinect_frames.launch">
+    <arg name="camera" value="camera1" />
+  </include>
+
+<!-- RGBDSLAM Node -->
+  <node pkg="multi_rgbdslam" type="rgbdslam" name="merry_rgbdslam" cwd="node" required="true" output="log"> 
+    <!-- Input data settings-->
+
+
+    <param name="config/camera_count"         	       value="2"/>
+
+    <param name="config/feature_detector_type"         value="ORB"/><!-- ORB are fastest and require no GPU -->
+    <param name="config/feature_extractor_type"        value="ORB"/><!-- ORB are fastest and require no GPU -->
+
+    <param name="config/nn_distance_ratio"             value="0.95"/> <!-- Feature correspondence is valid if distance to nearest neighbour is smaller than this parameter times the distance to the 2nd neighbour -->
+    <param name="config/max_keypoints"                 value="600"/><!-- Extract no more than this many keypoints (not honored by SIFTGPU)-->
+ 
+    <param name="config/visualization_skip_step"       value="1"/> <!-- Increase this if 3D rendering in GUI is still to slow-->
+    <param name="config/octomap_resolution"            value="0.05"/><!-- 5 cm resolution renders fast enough for small maps -->
+    <param name="config/maximum_depth"                 value="99.0"/><!-- Do not render points further than 3 meter in GUI and Octomap-->
+
+    <param name="config/topic_image_mono0"              value="/camera0/rgb/image_rect_color_unsync"/> 
+    <param name="config/topic_image_depth0"             value="/camera0/depth_registered/image_raw_unsync"/>
+    <param name="config/camera_info_topic0"	        value="/camera0/rgb/camera_info"/>
+<!---->
+    <param name="config/topic_image_mono1"              value="/camera1/rgb/image_rect_color_unsync"/> 
+    <param name="config/topic_image_depth1"             value="/camera1/depth_registered/image_raw_unsync"/>
+    <param name="config/camera_info_topic1"	        value="/camera1/rgb/camera_info"/>
+
+    <param name="config/cam1_trans_x"			value="1"/>
+    <param name="config/cam1_trans_y"			value="0"/>
+    <param name="config/cam1_trans_z"			value="0"/>
+    <param name="config/cam1_yaw"			value="0"/>
+    <param name="config/cam1_pitch"			value="0"/>
+    <param name="config/cam1_roll"			value="0"/>
+<!---->
+    <param name="config/concurrent_node_construction"	value="false" />
+    <param name="config/concurrent_edge_construction"	value="false" />
+    <param name="config/concurrent_optimization"	value="false" />
+<!--- Octomap 2D Config -->
+    <param name="config/frame_id"		       value = "/map" />
+    <param name="config/resolution" 		       value="0.05" />
+    <param name="config/sensor_model/max_range"        value="7.0" />
+    <param name="config/occupancy_min_z" 	       value="0"/>
+    <param name="config/occupancy_max_z" 	       value="0.5"/>	
+    <!--<param name="config/min_translation_meter"		value="0.01"/>
+    <param name="config/min_rotation_degree"		value="1"/> -->
+
+  </node>
+<!---->
+
+  <node pkg="image_transport" type="republish" name="depth_receiver0" args="compressedDepth in:=/camera0/depth_registered/image_rect/ raw out:=/camera0/depth_registered/image_raw_unsync" />
+  <node pkg="image_transport" type="republish" name="rgb_receiver0" args="compressed in:=/camera0/rgb/image_rect_color raw out:=/camera0/rgb/image_rect_color_unsync" />
+
+
+  <node pkg="image_transport" type="republish" name="depth_receiver1" args="compressedDepth in:=/camera1/depth_registered/image_rect/ raw out:=/camera1/depth_registered/image_raw_unsync" />
+  <node pkg="image_transport" type="republish" name="rgb_receiver1" args="compressed in:=/camera1/rgb/image_rect_color raw out:=/camera1/rgb/image_rect_color_unsync" />
+
+ <node pkg="rviz" type="rviz" name="rviz" output="screen" args="-d $(find multi_rgbdslam)/launch/merry_config.vcg" />
+
+<!---->
+
+</launch>
+

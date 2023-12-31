@@ -1,0 +1,66 @@
+<!-- 
+**********************************************
+Base Station System - Adapted RGBDSLAM System
+**********************************************
+This Adapted Rgbdslam System consists of two (2) parallel systems. The mentioned system consists of 
+the modified RGBDSLAM system where its input are connected to the openni_launch and its output are connected 
+to an octomap_server. 
+-->
+
+
+<launch>
+
+<!-- RGBDSLAM Node -->
+  <node pkg="rgbdslam3" type="rgbdslam" name="rgbdslam" cwd="node" required="true" output="log" ns="rgbdslam"> 
+    <!-- Input data settings-->
+
+
+    <param name="config/feature_detector_type"         value="SURF"/><!-- ORB are fastest and require no GPU -->
+    <param name="config/feature_extractor_type"        value="SURF"/><!-- ORB are fastest and require no GPU -->
+<!-- ***For Light Processing Power -->
+    <param name="config/max_keypoints"                 value="200"/><!-- Frame-to-frame comparisons are faster with few features-->
+    <param name="config/min_sampled_candidates"        value="5"/><!-- Frame-to-frame comparisons to random frames-->
+    <param name="config/nn_distance_ratio"             value="1"/><!-- Frame-to-frame comparisons to random frames-->
+
+    <param name="config/data_skip_step"                value="1"/><!-- skip every n-th frame completely -->
+    <param name="config/optimizer_skip_step"           value="10"/><!-- optimize every n-th frame. Set high for offline operation -->
+    <param name="config/backend_solver"                value="pcg"/> <!-- pcg is fast and good for online operation -->
+    <param name="config/cloud_creation_skip_step"      value="4"/> <!-- Subsample point cloud during creation: Makes creation and EMM faster, requires less storage -->
+    <param name="config/visualization_skip_step"       value="1"/> <!-- Increase this if 3D rendering in GUI is still to slow-->
+    <param name="config/octomap_resolution"            value="0.05"/><!-- 5 cm resolution renders fast enough for small maps -->
+
+    <param name="config/topic_image_mono0"              value="/camera0/rgb/image_rect_color_sync"/> <!--could also be color -->
+    <param name="config/topic_image_depth0"             value="/camera0/depth_registered/image_raw_sync"/>
+    <param name="config/camera_info_topic0"	       value="/camera0/rgb/camera_info_sync"/>
+
+    <param name="config/topic_image_mono1"              value="/camera1/rgb/image_rect_color_sync"/> <!--could also be color -->
+    <param name="config/topic_image_depth1"             value="/camera1/depth_registered/image_raw_sync"/>
+    <param name="config/camera_info_topic1"	       value="/camera1/rgb/camera_info_sync"/>
+
+    <param name="config/concurrent_node_construction"  value="false"/>
+    <param name="config/concurrent_edge_construction"  value="false"/>
+
+  </node>
+  <node pkg="rosbag" type="rosbag" name="rosbag" args="play -d 2 /home/rigel/ros/2014-09-26-14-30-57.bag">
+    <remap
+  </node>
+  <include file="$(find openni_launch)/launch/openni.launch">
+	<arg name="camera" value="camera1" />
+  	<arg name="device_id" value="#1" />
+  </include>
+
+  <include file="$(find openni_launch)/launch/openni.launch" >
+	<arg name="camera" value="camera2" />
+  	<arg name="device_id" value="#2" />
+  </include>
+
+  <node pkg="image_transport" type="republish" name="depth_receiver1" args="compressedDepth in:=/camera1/depth_registered/image_rect/ raw out:=/camera1/depth_registered/image_raw_unsync" />
+  <node pkg="image_transport" type="republish" name="rgb_receiver1" args="compressed in:=/camera1/rgb/image_rect_color raw out:=/camera1/rgb/image_rect_color_unsync" />
+  <node pkg="time_sync" type="rgbdsynchronizer" name = "camera1_synchronizer" args="camera1"/>
+ 
+  <node pkg="image_transport" type="republish" name="depth_receiver2" args="compressedDepth in:=/camera2/depth_registered/image_rect/ raw out:=/camera2/depth_registered/image_raw_unsync" />
+  <node pkg="image_transport" type="republish" name="rgb_receiver2" args="compressed in:=/camera2/rgb/image_rect_color raw out:=/camera2/rgb/image_rect_color_unsync" />
+  <node pkg="time_sync" type="rgbdsynchronizer" name = "camera2_synchronizer" args="camera2"/>
+
+</launch>
+

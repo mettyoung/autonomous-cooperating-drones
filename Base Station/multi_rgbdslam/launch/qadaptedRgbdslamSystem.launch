@@ -1,0 +1,175 @@
+<!-- 
+**********************************************
+Base Station System - Adapted RGBDSLAM System
+**********************************************
+This Adapted Rgbdslam System consists of two (2) parallel systems. The mentioned system consists of 
+the modified RGBDSLAM system where its input are connected to the openni_launch and its output are connected 
+to an octomap_server. 
+-->
+
+
+<launch>
+
+<!-- 1st Sub-System -->
+
+<!-- Openni_Launch 
+ <include file="$(find openni_launch)/launch/openni.launch">
+	<arg name="camera" value="camera1" />
+  	<arg name="device_id" value="#1" />
+  </include>
+-->
+
+<!-- Launch Kinect Frames -->
+  <arg name="publish_tf" default="true" />
+
+  <!-- Load reasonable defaults for the relative pose between cameras -->
+  <include if="$(arg publish_tf)"
+	   file="$(find openni_launch)/launch/kinect_frames.launch">
+    <arg name="camera" value="camera1" />
+  </include>
+
+<!-- RGBDSLAM Node -->
+  <node pkg="rgbdslam" type="rgbdslam" name="rgbdslam" cwd="node" required="true" output="log" ns="rgbdslam1"> 
+    <!-- Input data settings-->
+    <param name="config/feature_detector_type"         value="SURF"/><!-- ORB are fastest and require no GPU -->
+    <param name="config/feature_extractor_type"        value="SURF"/><!-- ORB are fastest and require no GPU -->
+    <param name="config/max_keypoints"                 value="200"/><!-- Frame-to-frame comparisons are faster with few features-->
+    <param name="config/min_sampled_candidates"        value="5"/><!-- Frame-to-frame comparisons to random frames-->
+    <param name="config/nn_distance_ratio"             value="1"/><!-- Frame-to-frame comparisons to random frames-->
+
+    <param name="config/data_skip_step"                value="2"/><!-- skip every n-th frame completely -->
+    <param name="config/optimizer_skip_step"           value="10"/><!-- optimize every n-th frame. Set high for offline operation -->
+    <param name="config/backend_solver"                value="pcg"/> <!-- pcg is fast and good for online operation -->
+    <param name="config/cloud_creation_skip_step"      value="4"/> <!-- Subsample point cloud during creation: Makes creation and EMM faster, requires less storage -->
+    <param name="config/visualization_skip_step"       value="1"/> <!-- Increase this if 3D rendering in GUI is still to slow-->
+    <param name="config/octomap_resolution"            value="0.05"/><!-- 5 cm resolution renders fast enough for small maps -->
+    <param name="config/maximum_depth"                 value="3.0"/><!-- Do not render -->
+
+    <!-- Added to configure tf family --> 
+    <param name="config/fixed_frame_name"	       value="/map1" />
+    <param name="config/base_frame_name"	       value="/camera1_link" />
+
+<!--    <param name="config/topic_image_mono"              value="/camera1/rgb/image_rect_color"/> --> <!--could also be color -->
+<!--    <param name="config/topic_image_depth"             value="/camera1/depth_registered/image_rect"/>
+    <param name="config/camera_info_topic"	       value="/camera1/rgb/camera_info"/> -->
+    <param name="config/topic_image_mono"              value="/camera1/rgb/image_rect_color_sync"/> <!--could also be color -->
+    <param name="config/topic_image_depth"             value="/camera1/depth_registered/image_raw_sync"/>
+    <param name="config/camera_info_topic"	       value="/camera1/rgb/camera_info_sync"/>
+
+    <param name="config/individual_cloud_out_topic"    value="/rgbdslam1/rgbdslam/batch_clouds"/>
+    <param name="config/aggregate_cloud_out_topic"     value="/rgbdslam1/rgbdslam/aggregate_clouds"/>
+  </node>
+
+  <node pkg="image_transport" type="republish" name="depth_receiver1" args="compressedDepth in:=/camera1/depth_registered/image_raw/ raw out:=/camera1/depth_registered/image_raw_unsync" />
+
+  <node pkg="image_transport" type="republish" name="rgb_receiver1" args="theora in:=/camera1/rgb/image_raw raw out:=/camera1/rgb/image_rect_color_unsync" />
+
+  <node pkg="time_sync" type="rgbdsynchronizer" name = "camera1_synchronizer" args="camera1" output="screen"/>
+
+<!-- Octomap_Server -->
+	<node pkg="octomap_server" type="octomap_server_node" name="octomap_server" ns="rgbdslam1">
+		<param name="resolution" value="0.0250" />
+	
+		<!-- fixed map frame (set to 'map' if SLAM or localization running!) 
+		Modified to suit the tf family -->
+		<param name="frame_id" type="string" value="map1" />
+	
+		<!-- maximum range to integrate (speedup, accuracy) -->
+		<param name="max_sensor_range" value="7.0" />
+
+
+	<param name="filter_ground" value="false" /><!-- who knows where the floor is? -->
+	<param name="base_frame_id" value="/openni_rgb_optical_frame" /> <!--needs to be set, even if not used-->
+	<param name="occupancy_min_z" value="-0.5"/>
+	<param name="occupancy_max_z" value="0.5"/>		
+		<!-- data source to integrate (PointCloud2) -->
+	<remap from="cloud_in" to="/rgbdslam1/rgbdslam/batch_clouds" />
+	</node>
+
+<!-- 2nd Sub-System -->
+
+<!-- Openni_Launch 
+ <include file="$(find openni_launch)/launch/openni.launch" >
+	<arg name="camera" value="camera2" />
+  	<arg name="device_id" value="#2" />
+  </include>
+ --> 
+
+<!-- Launch Kinect Frames -->
+  <!-- Load reasonable defaults for the relative pose between cameras -->
+  <include if="$(arg publish_tf)"
+	   file="$(find openni_launch)/launch/kinect_frames.launch">
+    <arg name="camera" value="camera2" />
+  </include>
+
+<!-- RGBDSLAM Node -->
+  <node pkg="rgbdslam" type="rgbdslam" name="rgbdslam" cwd="node" required="true" output="log" ns="rgbdslam2"> 
+    <!-- Input data settings-->
+    <param name="config/feature_detector_type"         value="SURF"/><!-- ORB are fastest and require no GPU -->
+    <param name="config/feature_extractor_type"        value="SURF"/><!-- ORB are fastest and require no GPU -->
+    <param name="config/max_keypoints"                 value="200"/><!-- Frame-to-frame comparisons are faster with few features-->
+    <param name="config/min_sampled_candidates"        value="5"/><!-- Frame-to-frame comparisons to random frames-->
+    <param name="config/nn_distance_ratio"             value="1"/><!-- Frame-to-frame comparisons to random frames-->
+
+    <param name="config/data_skip_step"                value="2"/><!-- skip every n-th frame completely -->
+    <param name="config/optimizer_skip_step"           value="10"/><!-- optimize every n-th frame. Set high for offline operation -->
+    <param name="config/backend_solver"                value="pcg"/> <!-- pcg is fast and good for online operation -->
+    <param name="config/cloud_creation_skip_step"      value="4"/> <!-- Subsample point cloud during creation: Makes creation and EMM faster, requires less storage -->
+    <param name="config/visualization_skip_step"       value="1"/> <!-- Increase this if 3D rendering in GUI is still to slow-->
+    <param name="config/octomap_resolution"            value="0.05"/><!-- 5 cm resolution renders fast enough for small maps -->
+    <param name="config/maximum_depth"                 value="3.0"/><!-- Do not render -->
+
+    <!-- Added to configure tf family --> 
+    <param name="config/fixed_frame_name"	       value="/map2" />
+    <param name="config/base_frame_name"	       value="/camera2_link" />
+
+<!--    <param name="config/topic_image_mono"              value="/camera2/rgb/image_rect_color"/> --> <!--could also be color -->
+<!--    <param name="config/topic_image_depth"             value="/camera2/depth_registered/image_rect"/> 
+    <param name="config/camera_info_topic"	       value="/camera2/rgb/camera_info"/> -->
+
+    <param name="config/topic_image_mono"              value="/camera2/rgb/image_rect_color_sync"/> <!--could also be color -->
+    <param name="config/topic_image_depth"             value="/camera2/depth_registered/image_raw_sync"/>
+    <param name="config/camera_info_topic"	       value="/camera2/rgb/camera_info_sync"/>
+
+    <param name="config/individual_cloud_out_topic"    value="/rgbdslam2/rgbdslam/batch_clouds"/>
+    <param name="config/aggregate_cloud_out_topic"     value="/rgbdslam2/rgbdslam/aggregate_clouds"/>
+  </node>
+
+<!-- Octomap_Server -->
+	<node pkg="octomap_server" type="octomap_server_node" name="octomap_server" ns="rgbdslam2">
+		<param name="resolution" value="0.0250" />
+	
+		<!-- fixed map frame (set to 'map' if SLAM or localization running!) 
+		Modified to suit the tf family -->
+		<param name="frame_id" type="string" value="map2" />
+	
+		<!-- maximum range to integrate (speedup, accuracy) -->
+		<param name="max_sensor_range" value="7.0" />
+
+
+	<param name="filter_ground" value="false" /><!-- who knows where the floor is? -->
+	<param name="base_frame_id" value="/openni_rgb_optical_frame" /> <!--needs to be set, even if not used-->
+	<param name="occupancy_min_z" value="-0.5"/>
+	<param name="occupancy_max_z" value="0.5"/>		
+		<!-- data source to integrate (PointCloud2) -->
+	<remap from="cloud_in" to="/rgbdslam2/rgbdslam/batch_clouds" />
+	</node>
+
+  <node pkg="image_transport" type="republish" name="depth_receiver2" args="compressedDepth in:=/camera2/depth_registered/image_raw/ raw out:=/camera2/depth_registered/image_raw_unsync" />
+
+  <node pkg="image_transport" type="republish" name="rgb_receiver2" args="theora in:=/camera2/rgb/image_raw raw out:=/camera2/rgb/image_rect_color_unsync" />
+
+  <node pkg="time_sync" type="rgbdsynchronizer" name = "camera2_synchronizer" args="camera2"/>
+<!-- RVIZ -->
+	<node pkg="rviz" type="rviz" name="rviz" output="screen" args="-d $(find rgbdslam)/launch/merry_config.vcg" />
+
+</launch>
+
+<!-- Add these at the end of the rosbag play <bag-file> 
+For Camera1:
+/camera/rgb/camera_info:=/camera1/rgb/camera_info /camera/rgb/image_rect_color:=/camera1/rgb/image_rect_color /camera/depth_registered/image_rect:=/camera1/depth_registered/image_rect
+For Camera2:
+/camera/rgb/camera_info:=/camera2/rgb/camera_info /camera/rgb/image_rect_color:=/camera2/rgb/image_rect_color /camera/depth_registered/image_rect:=/camera2/depth_registered/image_rect
+*********
+-->
+

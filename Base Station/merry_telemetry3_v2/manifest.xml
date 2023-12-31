@@ -1,0 +1,21 @@
+<package>
+  <description brief="merry_telemetry">
+
+     merry_telemetry
+
+  </description>
+  <author>Juan</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/merry_telemetry</url>
+  <depend package="roscpp"/>
+  <depend package="std_msgs"/>
+  <depend package="merryMsg"/>
+  <depend package="qt_build"/>
+  <depend package="roscpp"/>
+  <depend package="tf"/>
+
+  <rosdep name="libqt4-dev"/>
+  <depend package="qt_build"/>
+  <depend package="roscpp"/>
+</package>

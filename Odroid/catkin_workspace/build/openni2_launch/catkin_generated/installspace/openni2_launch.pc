@@ -1,0 +1,8 @@
+prefix=/home/odroid/catkin_workspace/install
+
+Name: openni2_launch
+Description: Description of openni2_launch
+Version: 0.1.4
+Cflags: 
+Libs: -L/home/odroid/catkin_workspace/install/lib 
+Requires: 

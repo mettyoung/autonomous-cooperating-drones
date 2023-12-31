@@ -1,0 +1,95 @@
+<!-- 
+**********************************************
+Base Station System - Adapted RGBDSLAM System
+**********************************************
+This Adapted Rgbdslam System consists of two (2) parallel systems. The mentioned system consists of 
+the modified RGBDSLAM system where its input are connected to the openni_launch and its output are connected 
+to an octomap_server. 
+-->
+
+
+<launch>
+
+  <arg name="publish_tf" default="true" />
+
+  <!-- Load reasonable defaults for the relative pose between cameras -->
+  <include if="$(arg publish_tf)"
+	   file="$(find openni_launch)/launch/kinect_frames.launch">
+    <arg name="camera" value="camera0" />
+  </include>
+
+  <!-- Load reasonable defaults for the relative pose between cameras -->
+  <include if="$(arg publish_tf)"
+	   file="$(find openni_launch)/launch/kinect_frames.launch">
+    <arg name="camera" value="camera1" />
+  </include>
+
+<!-- RGBDSLAM Node -->
+  <node pkg="multi_rgbdslam" type="rgbdslam" name="merry_rgbdslam" cwd="node" required="true" output="log"> 
+    <!-- Input data settings-->
+
+
+    <param name="config/camera_count"         	       value="2"/>
+
+    <param name="config/feature_detector_type"         value="SURF"/><!-- ORB are fastest and require no GPU -->
+    <param name="config/feature_extractor_type"        value="SURF"/><!-- ORB are fastest and require no GPU -->
+    <param name="config/max_keypoints"                 value="200"/><!-- Frame-to-frame comparisons are faster with few features-->
+    <param name="config/min_sampled_candidates"        value="5"/><!-- Frame-to-frame comparisons to random frames-->
+    <param name="config/nn_distance_ratio"             value="1"/><!-- Frame-to-frame comparisons to random frames-->
+
+    <param name="config/data_skip_step"                value="2"/><!-- skip every n-th frame completely -->
+    <param name="config/optimizer_skip_step"           value="10"/><!-- optimize every n-th frame. Set high for offline operation -->
+    <param name="config/backend_solver"                value="cholmod"/> <!-- pcg is fast and good for online operation -->
+    <param name="config/cloud_creation_skip_step"      value="4"/> <!-- Subsample point cloud during creation: Makes creation and EMM faster, requires less storage -->
+    <param name="config/visualization_skip_step"       value="1"/> <!-- Increase this if 3D rendering in GUI is still to slow-->
+    <param name="config/octomap_resolution"            value="0.05"/><!-- 5 cm resolution renders fast enough for small maps -->-->
+
+    <param name="config/topic_image_mono0"              value="/camera0/rgb/image_rect_color_unsync"/> 
+    <param name="config/topic_image_depth0"             value="/camera0/depth_registered/image_raw_unsync"/>
+    <param name="config/camera_info_topic0"	        value="/camera0/rgb/camera_info"/>
+<!---->
+    <param name="config/topic_image_mono1"              value="/camera1/rgb/image_rect_color_unsync"/> 
+    <param name="config/topic_image_depth1"             value="/camera1/depth_registered/image_raw_unsync"/>
+    <param name="config/camera_info_topic1"	        value="/camera1/rgb/camera_info"/>
+
+    <param name="config/cam1_trans_x"			value="1"/>
+    <param name="config/cam1_trans_y"			value="0"/>
+    <param name="config/cam1_trans_z"			value="0"/>
+    <param name="config/cam1_yaw"			value="0"/>
+    <param name="config/cam1_pitch"			value="0"/>
+    <param name="config/cam1_roll"			value="0"/>
+<!---->
+    <param name="config/concurrent_node_construction"	value="false" />
+    <param name="config/concurrent_edge_construction"	value="false" />
+    <param name="config/concurrent_optimization"	value="false" />
+<!--- Octomap 2D Config -->
+    <param name="config/frame_id"		       value = "/map" />
+    <param name="config/resolution" 		       value="0.05" />
+    <param name="config/sensor_model/max_range"        value="7.0" />
+    <param name="config/occupancy_min_z0" 	       value="-0.25"/>
+    <param name="config/occupancy_max_z0" 	       value="0.25"/>	
+    <param name="config/occupancy_min_z1" 	       value="0.75"/>
+    <param name="config/occupancy_max_z1" 	       value="1.25"/>	
+    <param name="config/start_paused"		       value="false"/>
+    <!--<param name="config/min_translation_meter"		value="0.01"/>
+    <param name="config/min_rotation_degree"		value="1"/> -->
+
+  </node>
+<!---->
+
+  <node pkg="image_transport" type="republish" name="depth_receiver0" args="compressedDepth in:=/camera0/depth_registered/image_rect/ raw out:=/camera0/depth_registered/image_raw_unsync" />
+  <node pkg="image_transport" type="republish" name="rgb_receiver0" args="compressed in:=/camera0/rgb/image_rect_color raw out:=/camera0/rgb/image_rect_color_unsync" />
+
+  <node pkg="image_transport" type="republish" name="depth_receiver1" args="compressedDepth in:=/camera1/depth_registered/image_rect/ raw out:=/camera1/depth_registered/image_raw_unsync" />
+  <node pkg="image_transport" type="republish" name="rgb_receiver1" args="compressed in:=/camera1/rgb/image_rect_color raw out:=/camera1/rgb/image_rect_color_unsync" />
+
+ <node pkg="rosbag" type="play" name="player0" args="/home/rigel/ros/bag/emmett2/0.bag"/>
+
+ <node pkg="rosbag" type="play" name="player1" args="/home/rigel/ros/bag/emmett2/1.bag"/>
+
+ <node pkg="rviz" type="rviz" name="rviz" output="screen" args="-d $(find multi_rgbdslam)/launch/merry_config.vcg" />
+
+<!---->
+
+</launch>
+

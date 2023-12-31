@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "merryMsg")
+set(merryMsg_MAINTAINER "odroid <odroid@todo.todo>")
+set(merryMsg_DEPRECATED "")
+set(merryMsg_VERSION "0.0.0")
+set(merryMsg_BUILD_DEPENDS "message_generation" "roscpp" "std_msgs")
+set(merryMsg_RUN_DEPENDS "message_runtime" "roscpp" "std_msgs")
+set(merryMsg_BUILDTOOL_DEPENDS "catkin")
